@@ -1,0 +1,185 @@
+{
+  "version_tag": "rf-20261106-155250",
+  "trained_at": "2026-11-06T15:52:50.016187+00:00",
+  "data": {
+    "n_total": 6000,
+    "n_real": 0,
+    "failure_rate": 0.1935
+  },
+  "random_forest_tuning": {
+    "grid": {
+      "min_samples_leaf": [
+        20,
+        40,
+        80
+      ],
+      "max_features": [
+        "sqrt",
+        0.5
+      ],
+      "max_depth": [
+        null,
+        8
+      ]
+    },
+    "best_params": {
+      "max_depth": 8,
+      "max_features": "sqrt",
+      "min_samples_leaf": 20
+    },
+    "best_cv_pr_auc": 0.3449
+  },
+  "cross_validation_5fold": {
+    "logistic_regression": {
+      "roc_auc": {
+        "mean": 0.6794,
+        "std": 0.0185
+      },
+      "pr_auc": {
+        "mean": 0.3564,
+        "std": 0.0183
+      },
+      "brier": {
+        "mean": 0.1449,
+        "std": 0.0015
+      },
+      "f1_at_0_5": {
+        "mean": 0.0915,
+        "std": 0.0117
+      }
+    },
+    "random_forest": {
+      "roc_auc": {
+        "mean": 0.6718,
+        "std": 0.0098
+      },
+      "pr_auc": {
+        "mean": 0.3449,
+        "std": 0.0154
+      },
+      "brier": {
+        "mean": 0.1465,
+        "std": 0.0009
+      },
+      "f1_at_0_5": {
+        "mean": 0.0064,
+        "std": 0.0085
+      }
+    }
+  },
+  "selection": {
+    "selected": "random_forest",
+    "reason": "PR-AUC gap +0.0115 is within 1 SD (0.0183): models tied, random forest kept as pre-registered"
+  },
+  "test": {
+    "n_test": 1200,
+    "failure_rate": 0.1933,
+    "selected_model_calibrated": {
+      "model": "random_forest",
+      "roc_auc": 0.7198,
+      "pr_auc": 0.3704,
+      "brier": 0.142
+    },
+    "selected_model_uncalibrated_brier": 0.1423,
+    "logistic_regression": {
+      "roc_auc": 0.7159,
+      "pr_auc": 0.3614,
+      "brier": 0.1424
+    },
+    "bayes_ceiling_roc_auc": 0.7397,
+    "high_or_critical_flagged": {
+      "threshold": 0.2539,
+      "precision": 0.3939,
+      "recall": 0.3922,
+      "f1": 0.3931,
+      "confusion": {
+        "tn": 828,
+        "fp": 140,
+        "fn": 141,
+        "tp": 91
+      }
+    },
+    "tiers": {
+      "LOW": {
+        "n": 661,
+        "share": 0.5508,
+        "observed_failure_rate": 0.1059
+      },
+      "MEDIUM": {
+        "n": 308,
+        "share": 0.2567,
+        "observed_failure_rate": 0.2305
+      },
+      "HIGH": {
+        "n": 178,
+        "share": 0.1483,
+        "observed_failure_rate": 0.3596
+      },
+      "CRITICAL": {
+        "n": 53,
+        "share": 0.0442,
+        "observed_failure_rate": 0.5094
+      }
+    },
+    "cost_optimal_threshold_oof": {
+      "threshold": 0.105,
+      "cost_fn": 10.0,
+      "cost_fp": 1.0,
+      "share_flagged": 0.8819
+    }
+  },
+  "thresholds": {
+    "medium": 0.1659,
+    "high": 0.2539,
+    "critical": 0.4001,
+    "design": "review capacity",
+    "target_shares": {
+      "LOW": 0.5,
+      "MEDIUM": 0.3,
+      "HIGH": 0.15,
+      "CRITICAL": 0.05
+    }
+  },
+  "permutation_importance_pr_auc": {
+    "change_type": {
+      "mean": 0.0091,
+      "std": 0.0056
+    },
+    "target_env": {
+      "mean": 0.0326,
+      "std": 0.0071
+    },
+    "patch_size_loc": {
+      "mean": 0.0175,
+      "std": 0.018
+    },
+    "files_changed": {
+      "mean": 0.0073,
+      "std": 0.0103
+    },
+    "test_coverage": {
+      "mean": 0.085,
+      "std": 0.008
+    },
+    "ticket_complexity": {
+      "mean": 0.0128,
+      "std": 0.0075
+    },
+    "module_failure_rate": {
+      "mean": 0.016,
+      "std": 0.0059
+    },
+    "has_db_migration": {
+      "mean": -0.0003,
+      "std": 0.0025
+    },
+    "dependency_changes": {
+      "mean": -0.0001,
+      "std": 0.0016
+    },
+    "friday_or_weekend": {
+      "mean": 0.0001,
+      "std": 0.0012
+    }
+  }
+}

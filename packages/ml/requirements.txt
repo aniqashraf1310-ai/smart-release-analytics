@@ -1,0 +1,9 @@
+# Minimum versions; newer releases work. Tested with numpy 2.4, pandas 3.0,
+# scikit-learn 1.8. A saved model must be loaded with the same scikit-learn
+# version it was trained with, so retrain (python train.py) after upgrading.
+numpy>=2.0
+pandas>=2.2
+scikit-learn>=1.6
+joblib>=1.3
+matplotlib>=3.8
+pytest>=8

@@ -1,0 +1,49 @@
+# Full stack:  docker compose up --build
+#   frontend  http://localhost:3000
+#   API docs  http://localhost:5000/docs
+# The database is created and seeded from packages/db/migrations on first start.
+# To start from scratch again:  docker compose down -v
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: release_mgmt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./packages/db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d release_mgmt"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://release_app:release_app@db:5432/release_mgmt
+      JWT_SECRET: change-me-in-production
+      CORS_ORIGINS: http://localhost:3000
+    ports: ["5000:5000"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      API_URL: http://api:5000
+    volumes:
+      - ./packages/frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  frontend_node_modules:

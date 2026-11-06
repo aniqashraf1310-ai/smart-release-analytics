@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 3s --health-retries 20
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      APP_PGPASSWORD: release_app
+      DATABASE_URL: postgresql://release_app:release_app@localhost:5432/release_mgmt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: packages/api/requirements.txt
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: pip install -r packages/api/requirements.txt
+
+      - name: Governance rules (SQL test suite)
+        run: |
+          bash packages/db/reset_db.sh gov_test
+          psql -d gov_test -v ON_ERROR_STOP=1 -q -f packages/db/tests/governance_tests.sql 2>&1 | tee gov.log
+          grep -q "ALL GOVERNANCE TESTS PASSED" gov.log
+
+      - name: Concurrency / race-condition test
+        run: |
+          bash packages/db/reset_db.sh conc_test
+          python packages/db/tests/concurrency_test.py conc_test
+
+      - name: Risk model unit tests
+        run: python -m pytest packages/ml/tests -q
+
+      - name: Train model
+        run: cd packages/ml && python train.py
+
+      - name: API end-to-end tests
+        run: |
+          bash packages/db/reset_db.sh release_mgmt
+          cd packages/api && python -m pytest tests -q
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model-report
+          path: packages/ml/reports/
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+        working-directory: packages/frontend
+      - run: npm run build
+        working-directory: packages/frontend

@@ -1,0 +1,20 @@
+{
+  "name": "smart-release-analytics",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "setup": "python -m pip install -r packages/api/requirements.txt && npm --prefix packages/frontend install",
+    "db:setup": "python packages/db/setup_db.py",
+    "db:upgrade": "python packages/db/setup_db.py --upgrade",
+    "train": "cd packages/ml && python train.py",
+    "dev": "concurrently -n web,api \"npm --prefix packages/frontend run dev\" \"cd packages/api && python -m uvicorn app.main:app --reload --port 5000\"",
+    "db:reset": "bash packages/db/reset_db.sh release_mgmt",
+    "test:db": "bash packages/db/reset_db.sh gov_test && psql -d gov_test -v ON_ERROR_STOP=1 -q -f packages/db/tests/governance_tests.sql",
+    "test:concurrency": "bash packages/db/reset_db.sh conc_test && python packages/db/tests/concurrency_test.py conc_test",
+    "test:ml": "python -m pytest packages/ml/tests -q",
+    "test:api": "npm run db:reset && cd packages/api && python -m pytest tests -q"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

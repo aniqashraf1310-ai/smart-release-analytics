@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-slate-800 antialiased;
+    background: radial-gradient(1200px 600px at 0% 0%, #EDE9FE 0%, transparent 60%),
+                radial-gradient(1000px 500px at 100% 0%, #FCE7F3 0%, transparent 55%),
+                #F8FAFC;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  /* Card with a thin brand-gradient stripe along the top edge. */
+  .brand-top {
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-top::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7C3AED, #EC4899, #F59E0B);
+  }
+  .brand-gradient {
+    background-image: linear-gradient(135deg, #7C3AED 0%, #DB2777 60%, #F59E0B 100%);
+  }
+  .brand-text {
+    background-image: linear-gradient(90deg, #7C3AED, #DB2777);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-14deg); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(5deg); }
+}
