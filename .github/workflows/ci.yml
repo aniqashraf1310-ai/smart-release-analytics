@@ -36,6 +36,11 @@ jobs:
           bash packages/db/reset_db.sh gov_test
           psql -d gov_test -v ON_ERROR_STOP=1 -q -f packages/db/tests/governance_tests.sql 2>&1 | tee gov.log
           grep -q "ALL GOVERNANCE TESTS PASSED" gov.log
+        
+      - name: Identity-binding test
+        run: |
+          bash packages/db/reset_db.sh id_test
+          psql -d id_test -v ON_ERROR_STOP=1 -f packages/db/tests/identity_binding_test.sql
 
       - name: Concurrency / race-condition test
         run: |
